@@ -56,43 +56,10 @@
 
 Запускается еженедельно, автоматически находит и удаляет лог-файлы старше 30 дней в критически важных директориях (/var/log/, директории логов медиа-сервера).
 
-Пример фрагмента скрипта:
-
-Bash
-
-#!/bin/bash
-# Скрипт для очистки старых лог-файлов
-LOG_DIR="/var/log/"
-MEDIA_SERVER_LOG_DIR="/opt/plex/Library/Application Support/Plex Media Server/Logs/" # Пример пути
-FIND_AGE="+30" # Файлы старше 30 дней
-
-echo "$(date): log cleanup..." >> /var/log/cleanup_logs.log
-find "$LOG_DIR" -type f -name "*.log" -mtime $FIND_AGE -delete -print >> /var/log/cleanup_logs.log
-find "$MEDIA_SERVER_LOG_DIR" -type f -name "*.log" -mtime $FIND_AGE -delete -print >> /var/log/cleanup_logs.log
-echo "$(date): Log cleanup finished." >> /var/log/cleanup_logs.log
 Скрипт условного перезапуска службы (restart_if_down.sh):
 
 Запускается каждые 5 минут, проверяет статус службы медиа-сервера. Если служба не активна, скрипт пытается её перезапустить, логирует событие и фиксирует результат.
 
-Пример фрагмента скрипта:
-
-Bash
-
-#!/bin/bash
-# Скрипт проверки и условного перезапуска службы Plex
-SERVICE_NAME="plexmediaserver" # Пример службы
-LOG_FILE="/var/log/service_restart.log"
-
-if ! systemctl is-active --quiet $SERVICE_NAME; then
-    echo "$(date): Service $SERVICE_NAME is not running. Attempting to restart..." >> $LOG_FILE
-    systemctl restart $SERVICE_NAME
-    sleep 5 # Даем время на запуск
-    if systemctl is-active --quiet $SERVICE_NAME; then
-        echo "$(date): Service $SERVICE_NAME restarted successfully." >> $LOG_FILE
-    else
-        echo "$(date): Failed to restart $SERVICE_NAME. Manual intervention required." >> $LOG_FILE
-    fi
-fi
 Все оповещения настроены на отправку уведомлений на мою электронную почту для оперативного реагирования.
 
 📈 Результаты и влияние
